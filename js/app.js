@@ -38,3 +38,14 @@ var ViewModel = function () {
 
 // Initiate the KO bindings
 ko.applyBindings(new ViewModel());
+
+// Google Maps API
+// Code to initialize the map when the web page loads
+// Obtained from: https://developers.google.com/maps/documentation/javascript/examples/map-simple
+var map;
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: -34.397, lng: 150.644},
+    zoom: 8
+  });
+}
