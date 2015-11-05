@@ -7,3 +7,9 @@ html, body {
 #map {
     height: 98vh;
 }
+
+#searchTerm {
+    background-color: #E5F2FF;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
