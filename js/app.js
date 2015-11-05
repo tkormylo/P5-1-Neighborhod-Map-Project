@@ -72,6 +72,7 @@ function toggleBounce(marker) {
         marker.setAnimation(null);
     } else {
         marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function(){ marker.setAnimation(null); }, 700); // Only allow the marker to bounce one time.
     }
     console.log('Exiting toggleBounce Function');
 }
