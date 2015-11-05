@@ -3,26 +3,25 @@
 var locationModel = [
     {
         name: 'China Blue',
-        lat: 43.614036,
-        lng: -116.201171
+        location: {lat: 43.614036, lng: -116.201171},
+        marker: {}
     },
     {
         name: 'Dirty Little Roddys',
-        lat: 43.614080,
-        lng: -116.200995
+        location: {lat: 43.614080, lng: -116.200995},
+        marker: {}
     },
     {
         name: 'Pengillys Saloon',
-        lat: 43.614036,
-        lng: -116.200712
+        location: {lat: 43.614036, lng: -116.200712},
+        marker: {}
     }
 ];
 
 // Location object
 var Location = function (data) {
     this.name = ko.observable(data.name);
-    this.lat = ko.observable(data.lat);
-    this.lng = ko.observable(data.lng);
+    this.location = ko.observable(data.location);
 };
 
 // ViewModel
@@ -43,8 +42,6 @@ var ViewModel = function () {
 var map;
 function initMap() {
 
-    var myLatLng = {lat: 43.614036, lng: -116.201171};
-
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 43.618722, lng: -116.215768}, // Center map to Boise, ID
         zoom: 15 // Zoom map to show downtown Boise, ID up close
@@ -53,12 +50,30 @@ function initMap() {
     // Place Google Map Markers on map
     // Obtained from: https://developers.google.com/maps/documentation/javascript/examples/marker-simple
     locationModel.forEach(function (locationItem) {
-        var marker = new google.maps.Marker({
-            position: {lat: locationItem.lat, lng: locationItem.lng},
+        locationItem.marker = new google.maps.Marker({
+            position: locationItem.location,
             map: map,
-            title: 'Dynamically Created'
+            animation: google.maps.Animation.DROP,
+            title: locationItem.name
         });
+
+        locationItem.marker.addListener('click', function () {
+            toggleBounce(locationItem.marker);
+        });
+
     });
+
+
+}
+
+function toggleBounce(marker) {
+    console.log('Entered toggleBounce Function');
+    if (marker.getAnimation() !== null) {
+        marker.setAnimation(null);
+    } else {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
+    console.log('Exiting toggleBounce Function');
 }
 
 // Initiate the knockout.js bindings
