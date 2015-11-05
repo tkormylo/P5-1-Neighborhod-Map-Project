@@ -93,8 +93,9 @@ var ViewModel = function () {
     locationModel.forEach(function (locationItem) {
         self.locationArray.push(new Location(locationItem));
     });
-
 };
+
+
 
 // Google Maps API
 // Code to initialize the map when the web page loads
@@ -122,8 +123,6 @@ function initMap() {
         });
 
     });
-
-
 }
 
 function toggleBounce(marker) {
@@ -135,6 +134,51 @@ function toggleBounce(marker) {
         setTimeout(function(){ marker.setAnimation(null); }, 700); // Only allow the marker to bounce one time.
     }
     console.log('Exiting toggleBounce Function');
+}
+
+// Add search functionality to the search text box and table of locations.
+// After the review of many, MANY solutions available to search and filter
+// a table, I found the following solution to be the easist to understand and
+// customize as needed.
+// Code Obtained from: http://dotnetprof.blogspot.com/2012/08/html-table-search-using-javascript.html
+function doSearch() {
+    var searchText = document.getElementById('searchTerm').value;
+    var targetTable = document.getElementById('dataTable');
+    var targetTableColCount;
+
+    //Loop through table rows
+    for (var rowIndex = 0; rowIndex < targetTable.rows.length; rowIndex++) {
+        var rowData = '';
+
+        //Get column count from header row
+        if (rowIndex == 0) {
+            targetTableColCount = targetTable.rows.item(rowIndex).cells.length;
+            continue; //do not execute further code for header row.
+        }
+
+        //Process data rows. (rowIndex >= 1)
+        for (var colIndex = 0; colIndex < targetTableColCount; colIndex++) {
+            var cellText = '';
+
+            if (navigator.appName == 'Microsoft Internet Explorer')
+                cellText = targetTable.rows.item(rowIndex).cells.item(colIndex).innerText;
+            else
+                cellText = targetTable.rows.item(rowIndex).cells.item(colIndex).textContent;
+
+            rowData += cellText;
+        }
+
+        // Make search case insensitive.
+        rowData = rowData.toLowerCase();
+        searchText = searchText.toLowerCase();
+
+        //If search term is not found in row data
+        //then hide the row, else show
+        if (rowData.indexOf(searchText) == -1)
+            targetTable.rows.item(rowIndex).style.display = 'none';
+        else
+            targetTable.rows.item(rowIndex).style.display = 'table-row';
+    }
 }
 
 // Initiate the knockout.js bindings
