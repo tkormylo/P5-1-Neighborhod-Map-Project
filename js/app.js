@@ -12,7 +12,7 @@ var locationModel = [
         marker: {}
     },
     {
-        name: 'Pengillys Saloon',
+        name: 'Pengilly\'s Saloon',
         location: {lat: 43.614036, lng: -116.200712},
         marker: {}
     },
@@ -82,6 +82,7 @@ var locationModel = [
 var Location = function (data) {
     this.name = ko.observable(data.name);
     this.location = ko.observable(data.location);
+    this.marker = ko.observable({});
 };
 
 // ViewModel
@@ -93,8 +94,8 @@ var ViewModel = function () {
     locationModel.forEach(function (locationItem) {
         self.locationArray.push(new Location(locationItem));
     });
-};
 
+};
 
 
 // Google Maps API
@@ -110,12 +111,12 @@ function initMap() {
 
     // Place Google Map Markers on map
     // Obtained from: https://developers.google.com/maps/documentation/javascript/examples/marker-simple
-    locationModel.forEach(function (locationItem) {
+    appVM.locationArray().forEach(function (locationItem) {
         locationItem.marker = new google.maps.Marker({
-            position: locationItem.location,
+            position: locationItem.location(),
             map: map,
             animation: google.maps.Animation.DROP,
-            title: locationItem.name
+            title: locationItem.name()
         });
 
         locationItem.marker.addListener('click', function () {
@@ -148,9 +149,6 @@ function openMarkerInfoWindow (marker) {
     });
     infowindow.open(map, marker);
 }
-
-
-
 
 
 // Add search functionality to the search text box and table of locations.
@@ -198,6 +196,9 @@ function doSearch() {
     }
 }
 
+var appVM = new ViewModel();
+ko.applyBindings(appVM);
+
 // Initiate the knockout.js bindings
-ko.applyBindings(new ViewModel());
+//ko.applyBindings(new ViewModel());
 
