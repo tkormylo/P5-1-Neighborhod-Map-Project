@@ -120,13 +120,16 @@ function initMap() {
 
         locationItem.marker.addListener('click', function () {
             toggleBounce(locationItem.marker);
+            openMarkerInfoWindow(locationItem.marker);
         });
 
     });
 }
 
+// Bounce the appropriate map marker one time when selected
 function toggleBounce(marker) {
     console.log('Entered toggleBounce Function');
+
     if (marker.getAnimation() !== null) {
         marker.setAnimation(null);
     } else {
@@ -135,6 +138,20 @@ function toggleBounce(marker) {
     }
     console.log('Exiting toggleBounce Function');
 }
+
+// Open an info window for the marker selected displaying information
+// about the location selected
+function openMarkerInfoWindow (marker) {
+    var contentString = '';
+    var infowindow = new google.maps.InfoWindow({
+        content: contentString
+    });
+    infowindow.open(map, marker);
+}
+
+
+
+
 
 // Add search functionality to the search text box and table of locations.
 // After the review of many, MANY solutions available to search and filter
