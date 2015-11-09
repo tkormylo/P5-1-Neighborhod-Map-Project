@@ -189,10 +189,12 @@ function doSearch() {
 
         //If search term is not found in row data
         //then hide the row, else show
-        if (rowData.indexOf(searchText) == -1)
+        if (rowData.indexOf(searchText) == -1) {
             targetTable.rows.item(rowIndex).style.display = 'none';
-        else
+        }
+        else {
             targetTable.rows.item(rowIndex).style.display = 'table-row';
+        };
     }
 }
 
