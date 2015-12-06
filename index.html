@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <title>P5-1 Neighborhood Map Project</title>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+        <script type='text/javascript' src='knockout/knockout-3.4.0.js'></script>
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
@@ -15,19 +15,13 @@
             <div class="row">
                 <div class="col-md-3">
                     <div>
-                        <input id="searchTerm" type="text" class="form-control" placeholder="Search..." onkeyup="doSearch(locationModel)">
+                        <input id="s-input" type="search" class="form-control" placeholder="Search..." data-bind="textInput: query, valueUpdate: 'keyup'"></input>
+                        <input placeholder="Search…" type="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
                     </div>
                     <div>
-                    <table id="dataTable" class="table table-hover">
-                        <thead>
-                            <tr><th>List of Bars in Boise, ID</th></tr>
-                        </thead>
-                        <tbody data-bind='foreach: locationArray'>
-                            <tr>
-                                <td data-bind='text: name'></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <ul data-bind="foreach: locationArray">
+                        <li data-bind="text: name"></li>
+                    </ul>
                     </div>
                 </div>
                 <div class="col-md-9">
