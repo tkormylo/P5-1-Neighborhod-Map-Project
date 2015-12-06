@@ -98,13 +98,30 @@ var ViewModel = function () {
     this.query = ko.observable('');
 
     this.search = function (value) {
+
+        self.locationArray().forEach(function (locationItem) {
+            locationItem.marker.setMap(null);
+        });
+
         self.locationArray([]);
 
         for(var x in locationModel) {
             if(locationModel[x].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-                self.locationArray.push(locationModel[x]);
+                //self.locationArray.push(locationModel[x]);
+                self.locationArray.push(new Location(locationModel[x]));
             }
         }
+
+        // Place Google Map Markers on map
+        // Obtained from: https://developers.google.com/maps/documentation/javascript/examples/marker-simple
+        self.locationArray().forEach(function (locationItem) {
+            locationItem.marker = new google.maps.Marker({
+                position: locationItem.location(),
+                map: map,
+                animation: google.maps.Animation.DROP,
+                title: locationItem.name()
+            });
+        });
     }
 
     this.query.subscribe(this.search);
