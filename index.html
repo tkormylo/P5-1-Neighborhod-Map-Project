@@ -18,8 +18,8 @@
                         <input id="s-input" class="form-control" placeholder="Search..." type="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
                     </div>
                     <div>
-                    <ul data-bind="foreach: locationArray">
-                        <li data-bind="text: name"></li>
+                    <ul class="list-group" data-bind="foreach: locationArray">
+                        <li class="list-group-item" data-bind="text: name"></li>
                     </ul>
                     </div>
                 </div>

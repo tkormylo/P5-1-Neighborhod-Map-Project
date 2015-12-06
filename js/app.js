@@ -118,7 +118,7 @@ var ViewModel = function () {
             locationItem.marker = new google.maps.Marker({
                 position: locationItem.location(),
                 map: map,
-                animation: google.maps.Animation.DROP,
+                //animation: google.maps.Animation.DROP,
                 title: locationItem.name()
             });
         });
