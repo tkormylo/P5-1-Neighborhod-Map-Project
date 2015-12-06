@@ -7,3 +7,8 @@ html, body {
 #map {
     height: 98vh;
 }
+
+.highlight {
+    background-color: #e5e5ff;
+    font-weight: bold;
+}

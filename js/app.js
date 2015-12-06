@@ -127,7 +127,18 @@ var ViewModel = function () {
     this.query.subscribe(this.search);
 };
 
+$('#location-list').on('click', 'li', function() {
+    $('.highlight').removeClass('highlight');
+    $(this).toggleClass('highlight');
 
+    var selectedItemName = $(this).text();
+
+    appVM.locationArray().forEach(function (locationItem) {
+        if(locationItem.name() == selectedItemName) {
+            toggleBounce(locationItem.marker);
+        };
+    });
+});
 
 // Google Maps API
 // Code to initialize the map when the web page loads
@@ -170,6 +181,9 @@ function toggleBounce(marker) {
     }
     console.log('Exiting toggleBounce Function');
 }
+
+
+
 
 // Open an info window for the marker selected displaying information
 // about the location selected
