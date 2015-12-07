@@ -98,6 +98,7 @@ var ViewModel = function () {
     this.query = ko.observable('');
 
     this.search = function (value) {
+        closeMarkerInfoWindows();
 
         self.locationArray().forEach(function (locationItem) {
             locationItem.marker.setMap(null);
@@ -112,16 +113,16 @@ var ViewModel = function () {
             }
         }
 
-        // Place Google Map Markers on map
-        // Obtained from: https://developers.google.com/maps/documentation/javascript/examples/marker-simple
+        // Place Google Map Markers for each search result
         self.locationArray().forEach(function (locationItem) {
             locationItem.marker = new google.maps.Marker({
                 position: locationItem.location(),
                 map: map,
-                //animation: google.maps.Animation.DROP,
                 title: locationItem.name()
             });
         });
+        createNewInfoWindow();
+        addMarkerClickEventListner();
     }
 
     this.query.subscribe(this.search);
@@ -141,6 +142,10 @@ $('#location-list').on('click', 'li', function() {
     appVM.locationArray().forEach(function (locationItem) {
         if(locationItem.name() == selectedItemName) {
             toggleBounce(locationItem.marker);
+            // Close all open marker windows
+            closeMarkerInfoWindows();
+            // Open the marker info window
+            openMarkerInfoWindow(locationItem.marker);
         };
     });
 });
@@ -166,24 +171,39 @@ function initMap() {
             animation: google.maps.Animation.DROP,
             title: locationItem.name()
         });
+    });
+    createNewInfoWindow()
+    addMarkerClickEventListner();
+}
 
+function createNewInfoWindow() {
+    appVM.locationArray().forEach(function (locationItem) {
         // Create a new info window object for each marker object
         locationItem.marker.infowindow = new google.maps.InfoWindow({
             content: infoWindowContentString
         });
+    });
+}
+
+function addMarkerClickEventListner() {
+    // Add the click event lister to each marker in the locationsArray
+    appVM.locationArray().forEach(function (locationItem) {
 
         locationItem.marker.addListener('click', function () {
-            // Close any and all marker info windows
-            appVM.locationArray().forEach(function (locationItem) {
-                locationItem.marker.infowindow.close();
-            });
-
+            closeMarkerInfoWindows();
             // Bounce the marker
             toggleBounce(locationItem.marker);
             // Open the marker info window
             openMarkerInfoWindow(locationItem.marker);
-
         });
+
+    });
+}
+
+function closeMarkerInfoWindows() {
+    // Close any and all marker info windows
+    appVM.locationArray().forEach(function (locationItem) {
+        locationItem.marker.infowindow.close();
     });
 }
 
