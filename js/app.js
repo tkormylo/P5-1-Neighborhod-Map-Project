@@ -128,8 +128,27 @@ var ViewModel = function () {
     this.query.subscribe(this.search);
 };
 
+var fsClientID = '4V5DEEIKDI0JBNNO4KJK03BEADIOKLRLDENVJTNBAYAIQQFY';
+var fsClientSecret = 'CQ21XTFDMK4QSIRHDY2N5SN5LJPV5HHCDAVZKI3OBFJDQFS0';
+var fsVersionDate = '20161231';
+var fsMode = 'foursquare';
+
+var fsAPICallSettings = {
+    url: 'https://api.foursquare.com/v2/venues/4b4781c6f964a5204a3426e3?client_id=' + fsClientID + '&client_secret=' + fsClientSecret + '&v=' + fsVersionDate + '&m=' + fsMode,
+    dataType: 'json',
+    success: function() {
+        console.log('Got a file');
+    },
+    error: function() {
+        console.log('Error getting file');
+    }
+}
+
 // Code to execute when a list item (location) is clicked
 $('#location-list').on('click', 'li', function() {
+
+    // Add code here to perform foursquare API call
+    $.ajax(fsAPICallSettings);
 
     // Add / Remove the "highlight" class to highlight the selected item
     $('.highlight').removeClass('highlight');
