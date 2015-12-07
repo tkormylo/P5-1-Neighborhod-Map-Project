@@ -127,12 +127,17 @@ var ViewModel = function () {
     this.query.subscribe(this.search);
 };
 
+// Code to execute when a list item (location) is clicked
 $('#location-list').on('click', 'li', function() {
+
+    // Add / Remove the "highlight" class to highlight the selected item
     $('.highlight').removeClass('highlight');
     $(this).toggleClass('highlight');
 
+    // Get the location name of the list item selected
     var selectedItemName = $(this).text();
 
+    // Scan the location array and bounce the marker of the location with a matching name of the clicked list item.
     appVM.locationArray().forEach(function (locationItem) {
         if(locationItem.name() == selectedItemName) {
             toggleBounce(locationItem.marker);
@@ -144,6 +149,7 @@ $('#location-list').on('click', 'li', function() {
 // Code to initialize the map when the web page loads
 // Obtained from: https://developers.google.com/maps/documentation/javascript/examples/map-simple
 var map;
+var infoWindowContentString = '';
 function initMap() {
 
     map = new google.maps.Map(document.getElementById('map'), {
@@ -161,38 +167,36 @@ function initMap() {
             title: locationItem.name()
         });
 
-        locationItem.marker.addListener('click', function () {
-            toggleBounce(locationItem.marker);
-            openMarkerInfoWindow(locationItem.marker);
+        // Create a new info window object for each marker object
+        locationItem.marker.infowindow = new google.maps.InfoWindow({
+            content: infoWindowContentString
         });
 
+        locationItem.marker.addListener('click', function () {
+            // Close any and all marker info windows
+            appVM.locationArray().forEach(function (locationItem) {
+                locationItem.marker.infowindow.close();
+            });
+
+            // Bounce the marker
+            toggleBounce(locationItem.marker);
+            // Open the marker info window
+            openMarkerInfoWindow(locationItem.marker);
+
+        });
     });
 }
 
 // Bounce the appropriate map marker one time when selected
 function toggleBounce(marker) {
-    console.log('Entered toggleBounce Function');
-
-    if (marker.getAnimation() !== null) {
-        marker.setAnimation(null);
-    } else {
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function(){ marker.setAnimation(null); }, 700); // Only allow the marker to bounce one time.
-    }
-    console.log('Exiting toggleBounce Function');
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function(){ marker.setAnimation(null); }, 700); // Only allow the marker to bounce one time.
 }
-
-
-
 
 // Open an info window for the marker selected displaying information
 // about the location selected
 function openMarkerInfoWindow (marker) {
-    var contentString = '';
-    var infowindow = new google.maps.InfoWindow({
-        content: contentString
-    });
-    infowindow.open(map, marker);
+    marker.infowindow.open(map, marker);
 }
 
 // Initiate the knockout.js bindings
