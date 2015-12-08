@@ -195,10 +195,15 @@ $('#location-list').on('click', 'li', function() {
                                 '<abbr title="Phone">P:</abbr>' + json.response.venue.contact.formattedPhone +
                             '</address>' +
                             '<p>' + json.response.venue.hours.status + '</p>' +
-                            '<a target="_blank" href="' + json.response.venue.canonicalUrl + '">Show My Foursquare Web Page!</a>' +
+                            '<a target="_blank" href="' + json.response.venue.canonicalUrl + '">Venue Foursquare Page</a>' +
                         '</div>' +
                         '<div class="col-md-6">' +
-                            '<img src="' + json.response.venue.bestPhoto.prefix + '125x125' + json.response.venue.bestPhoto.suffix + '" class="img-responsive">' +
+                            '<img src="' + json.response.venue.bestPhoto.prefix + '125x125' + json.response.venue.bestPhoto.suffix + '" class="img-responsive center-block">' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<div class="col-md-12">' +
+                            '<img src="images/poweredby-one-color-cdf070cc7ae72b3f482cf2d075a74c8c.png" height="25" width="150" class="img-responsive center-block">' +
                         '</div>' +
                     '</div>');
 
