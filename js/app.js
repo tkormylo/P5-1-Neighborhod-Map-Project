@@ -93,18 +93,16 @@ var locationModel = [
     }
 ];
 
+// "Global" variables used thoughout the app
 var map;
 var infoWindowContentString = '';
-
 var fsVenueID = '';
 var fsClientID = '4V5DEEIKDI0JBNNO4KJK03BEADIOKLRLDENVJTNBAYAIQQFY';
 var fsClientSecret = 'CQ21XTFDMK4QSIRHDY2N5SN5LJPV5HHCDAVZKI3OBFJDQFS0';
 var fsVersionDate = '20161231';
 var fsMode = 'foursquare';
 var fsAPICallSettings = {};
-
 var fsResult = {};
-
 var url = '';
 
 // Location object
@@ -127,6 +125,7 @@ var ViewModel = function () {
 
     this.query = ko.observable('');
 
+    // Search to run with each keystroke in the search field
     this.search = function (value) {
         closeMarkerInfoWindows();
 
@@ -183,11 +182,12 @@ $('#location-list').on('click', 'li', function() {
     });
 });
 
-
+// Perform the foursquare API call
 function performFsAPICall(locationItem) {
-    // Perform foursquare API call
+    // Update the URL to make the call
     url = 'https://api.foursquare.com/v2/venues/' + fsVenueID + '?client_id=' + fsClientID + '&client_secret=' + fsClientSecret + '&v=' + fsVersionDate + '&m=' + fsMode;
 
+    // Attempt to get JSON data about the venue location from foursquare
     $.getJSON(url, function (json) {
 
         // Check if keys exist in foursquare venu data. For example, "hours" may not exist as a key.
@@ -199,6 +199,7 @@ function performFsAPICall(locationItem) {
         var venueURLTag = 'Venue Fourquare Page';
         var venueBestPhotoURL = '';
 
+        // Check each element of the JSON response and if it is not present, handle it.
         if(json.response.venue.name) {
             venueName = json.response.venue && json.response.venue.name;
         }
@@ -244,35 +245,35 @@ function performFsAPICall(locationItem) {
             venueBestPhotoURL = 'images/foursquare_appicon_72-eb6c8127fe40e296c7491e363b62e159.png';
         }
 
-                //Update marker infowindow with content to display
-                locationItem.marker.infowindow.setContent('<div class="container-fluid">' +
-                    '<div class="row">' +
-                        '<div class="col-md-12">' +
-                            '<h3>' + venueName +'</h3>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<div class="col-md-6">' +
-                            '<address>' +
-                                venueAddress + '<br>' +
-                                '<abbr title="Phone">P:</abbr>' + venueFormattedPhone +
-                            '</address>' +
-                            '<p>' + venueHours + '</p>' +
-                            '<a target="_blank" href="' + venueURL + '">' + venueURLTag + '</a>' +
-                        '</div>' +
-                        '<div class="col-md-6">' +
-                            '<img src="' + venueBestPhotoURL + '" class="img-responsive center-block">' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<div class="col-md-12">' +
-                            '<img src="images/poweredby-one-color-cdf070cc7ae72b3f482cf2d075a74c8c.png" height="25" width="150" class="img-responsive center-block">' +
-                        '</div>' +
-                    '</div>');
+        //Update marker infowindow with content to display
+        locationItem.marker.infowindow.setContent('<div class="container-fluid">' +
+            '<div class="row">' +
+                '<div class="col-md-12">' +
+                    '<h3>' + venueName +'</h3>' +
+                '</div>' +
+            '</div>' +
+            '<div class="row">' +
+                '<div class="col-md-6">' +
+                    '<address>' +
+                        venueAddress + '<br>' +
+                        '<abbr title="Phone">P:</abbr>' + venueFormattedPhone +
+                    '</address>' +
+                    '<p>' + venueHours + '</p>' +
+                    '<a target="_blank" href="' + venueURL + '">' + venueURLTag + '</a>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                    '<img src="' + venueBestPhotoURL + '" class="img-responsive center-block">' +
+                '</div>' +
+            '</div>' +
+            '<div class="row">' +
+                '<div class="col-md-12">' +
+                    '<img src="images/poweredby-one-color-cdf070cc7ae72b3f482cf2d075a74c8c.png" height="25" width="150" class="img-responsive center-block">' +
+                '</div>' +
+            '</div>');
 
-                // Open the marker info window
-                openMarkerInfoWindow(locationItem.marker);
-            })
+        // Open the marker info window
+        openMarkerInfoWindow(locationItem.marker);
+    })
 
     .done(function() { console.log('getJSON request for ' + '"' + locationItem.name() + '"' + ' succeeded!'); })
     .fail(function() { alert('getJSON request for ' + '"' + locationItem.name() + '"' + ' failed! Please check browser console for additional information.'); })
@@ -283,7 +284,6 @@ function performFsAPICall(locationItem) {
 // Code to initialize the map when the web page loads
 // Obtained from: https://developers.google.com/maps/documentation/javascript/examples/map-simple
 function initMap() {
-
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 43.615612, lng: -116.203751}, // Center map to Boise, ID
         zoom: 16 // Zoom map to show downtown Boise, ID up close
@@ -303,6 +303,7 @@ function initMap() {
     addMarkerClickEventListner();
 }
 
+// Create a new info window object for the marker on each location
 function createNewInfoWindow() {
     appVM.locationArray().forEach(function (locationItem) {
         // Create a new info window object for each marker object
@@ -312,6 +313,7 @@ function createNewInfoWindow() {
     });
 }
 
+// Add marker click event listner to all locations
 function addMarkerClickEventListner() {
     // Add the click event lister to each marker in the locationsArray
     appVM.locationArray().forEach(function (locationItem) {
@@ -328,10 +330,10 @@ function addMarkerClickEventListner() {
 
             performFsAPICall(locationItem);
         });
-
     });
 }
 
+// Close all marker info windows
 function closeMarkerInfoWindows() {
     // Close any and all marker info windows
     appVM.locationArray().forEach(function (locationItem) {
