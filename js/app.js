@@ -190,24 +190,78 @@ function performFsAPICall(locationItem) {
 
     $.getJSON(url, function (json) {
 
+        // Check if keys exist in foursquare venu data. For example, "hours" may not exist as a key.
+        var venueName = '';
+        var venueAddress = '';
+        var venueFormattedPhone = '';
+        var venueHours = '';
+        var venueURL = '';
+        var venueURLTag = 'Venue Fourquare Page';
+        var venueBestPhotoURL = '';
+
+        if(json.response.venue.name) {
+            venueName = json.response.venue && json.response.venue.name;
+        }
+        else {
+            venueName = 'Venue Name Unavailable';
+        }
+
+        if(json.response.venue && json.response.venue.location && json.response.venue.location.address) {
+            venueAddress = json.response.venue.location.address;
+        }
+        else {
+            venueAddress = 'Venue Address Unavailable';
+        }
+
+        if(json.response.venue.contact && json.response.venue.contact && json.response.venue.contact.formattedPhone) {
+            venueFormattedPhone = json.response.venue.contact.formattedPhone
+        }
+        else {
+            venueFormattedPhone = 'Venue Phone Number Unavailable';
+        }
+
+        if(json.response.venue && json.response.venue.hours && json.response.venue.hours.status) {
+            venueHours = json.response.venue.hours.status
+        }
+        else {
+            venueHours = 'Venue Hours Unavailable';
+        }
+
+        if(json.response.venue && json.response.venue.canonicalUrl) {
+            venueURL = json.response.venue.canonicalUrl
+        }
+        else {
+            venueURL = 'http://www.foursquare.com';
+            venueURLTag = 'No Foursquare Page Available';
+        }
+
+        if(json.response.venue && json.response.venue.bestPhoto) {
+            var venueBestPhotoPrefix = json.response.venue.bestPhoto.prefix;
+            var venueBestPhotoSuffix = json.response.venue.bestPhoto.suffix;
+            venueBestPhotoURL = json.response.venue.bestPhoto.prefix + '125x125' + json.response.venue.bestPhoto.suffix;
+        }
+        else {
+            venueBestPhotoURL = 'images/foursquare_appicon_72-eb6c8127fe40e296c7491e363b62e159.png';
+        }
+
                 //Update marker infowindow with content to display
                 locationItem.marker.infowindow.setContent('<div class="container-fluid">' +
                     '<div class="row">' +
                         '<div class="col-md-12">' +
-                            '<h3>' + json.response.venue.name +'</h3>' +
+                            '<h3>' + venueName +'</h3>' +
                         '</div>' +
                     '</div>' +
                     '<div class="row">' +
                         '<div class="col-md-6">' +
                             '<address>' +
-                                json.response.venue.location.address + '<br>' +
-                                '<abbr title="Phone">P:</abbr>' + json.response.venue.contact.formattedPhone +
+                                venueAddress + '<br>' +
+                                '<abbr title="Phone">P:</abbr>' + venueFormattedPhone +
                             '</address>' +
-                            '<p>' + json.response.venue.hours.status + '</p>' +
-                            '<a target="_blank" href="' + json.response.venue.canonicalUrl + '">Venue Foursquare Page</a>' +
+                            '<p>' + venueHours + '</p>' +
+                            '<a target="_blank" href="' + venueURL + '">' + venueURLTag + '</a>' +
                         '</div>' +
                         '<div class="col-md-6">' +
-                            '<img src="' + json.response.venue.bestPhoto.prefix + '125x125' + json.response.venue.bestPhoto.suffix + '" class="img-responsive center-block">' +
+                            '<img src="' + venueBestPhotoURL + '" class="img-responsive center-block">' +
                         '</div>' +
                     '</div>' +
                     '<div class="row">' +
