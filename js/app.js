@@ -105,6 +105,8 @@ var fsAPICallSettings = {};
 
 var fsResult = {};
 
+var url = '';
+
 // Location object
 var Location = function (data) {
     this.name = ko.observable(data.name);
@@ -167,19 +169,26 @@ $('#location-list').on('click', 'li', function() {
     // Scan the location array and bounce the marker of the location with a matching name of the clicked list item.
     appVM.locationArray().forEach(function (locationItem) {
         if(locationItem.name() == selectedItemName) {
-            // Bounce the selected location marker
-            toggleBounce(locationItem.marker);
-
             // Close all open marker windows
             closeMarkerInfoWindows();
+
+            // Bounce the selected location marker
+            toggleBounce(locationItem.marker);
 
             // Update the foursquare venue ID with the location selected from the list
             fsVenueID = locationItem.fourSquareVenueID();
 
-            // Perform foursquare API call
-            var url = 'https://api.foursquare.com/v2/venues/' + fsVenueID + '?client_id=' + fsClientID + '&client_secret=' + fsClientSecret + '&v=' + fsVersionDate + '&m=' + fsMode
+            performFsAPICall(locationItem);
+        };
+    });
+});
 
-            $.getJSON(url, function (json) {
+
+function performFsAPICall(locationItem) {
+    // Perform foursquare API call
+            url = 'https://api.foursquare.com/v2/venues/' + fsVenueID + '?client_id=' + fsClientID + '&client_secret=' + fsClientSecret + '&v=' + fsVersionDate + '&m=' + fsMode;
+
+    $.getJSON(url, function (json) {
 
                 //Update marker infowindow with content to display
                 locationItem.marker.infowindow.setContent('<div class="container-fluid">' +
@@ -210,12 +219,7 @@ $('#location-list').on('click', 'li', function() {
                 // Open the marker info window
                 openMarkerInfoWindow(locationItem.marker);
             });
-        };
-    });
-});
-
-
-
+}
 
 // Google Maps API
 // Code to initialize the map when the web page loads
@@ -255,11 +259,16 @@ function addMarkerClickEventListner() {
     appVM.locationArray().forEach(function (locationItem) {
 
         locationItem.marker.addListener('click', function () {
+            // Close all open marker windows
             closeMarkerInfoWindows();
-            // Bounce the marker
+
+            // Bounce the selected location marker
             toggleBounce(locationItem.marker);
-            // Open the marker info window
-            openMarkerInfoWindow(locationItem.marker);
+
+            // Update the foursquare venue ID with the location selected from the list
+            fsVenueID = locationItem.fourSquareVenueID();
+
+            performFsAPICall(locationItem);
         });
 
     });
