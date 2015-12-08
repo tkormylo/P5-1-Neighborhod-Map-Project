@@ -186,7 +186,7 @@ $('#location-list').on('click', 'li', function() {
 
 function performFsAPICall(locationItem) {
     // Perform foursquare API call
-            url = 'https://api.foursquare.com/v2/venues/' + fsVenueID + '?client_id=' + fsClientID + '&client_secret=' + fsClientSecret + '&v=' + fsVersionDate + '&m=' + fsMode;
+    url = 'https://api.foursquare.com/v2/venues/' + fsVenueID + '?client_id=' + fsClientID + '&client_secret=' + fsClientSecret + '&v=' + fsVersionDate + '&m=' + fsMode;
 
     $.getJSON(url, function (json) {
 
@@ -232,7 +232,7 @@ function performFsAPICall(locationItem) {
         }
         else {
             venueURL = 'http://www.foursquare.com';
-            venueURLTag = 'No Foursquare Page Available';
+            venueURLTag = 'Foursquare Page Unavailable';
         }
 
         if(json.response.venue && json.response.venue.bestPhoto) {
@@ -272,7 +272,11 @@ function performFsAPICall(locationItem) {
 
                 // Open the marker info window
                 openMarkerInfoWindow(locationItem.marker);
-            });
+            })
+
+    .done(function() { console.log('getJSON request for ' + '"' + locationItem.name() + '"' + ' succeeded!'); })
+    .fail(function() { alert('getJSON request for ' + '"' + locationItem.name() + '"' + ' failed! Please check browser console for additional information.'); })
+    .always(function() { console.log('getJSON request for ' + '"' + locationItem.name() + '"' + ' ended!'); });
 }
 
 // Google Maps API
