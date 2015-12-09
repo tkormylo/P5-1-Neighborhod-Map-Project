@@ -111,6 +111,8 @@ var Location = function (data) {
     this.location = ko.observable(data.location);
     this.fourSquareVenueID = ko.observable(data.fourSquareVenueID);
     this.marker = ko.observable({});
+    this._destroy = ko.observable(false);
+    this.isClicked = ko.observable(false);
 };
 
 // ViewModel
@@ -130,57 +132,36 @@ var ViewModel = function () {
         closeMarkerInfoWindows();
 
         self.locationArray().forEach(function (locationItem) {
-            locationItem.marker.setMap(null);
-        });
+            locationItem.marker.setVisible(false); // hide the map marker
+            locationItem._destroy(true); // hide the location in the list view
 
-        self.locationArray([]);
-
-        for(var x in locationModel) {
-            if(locationModel[x].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-                self.locationArray.push(new Location(locationModel[x]));
+            if (locationItem.name().toLowerCase().indexOf(value.toLowerCase()) >=0) {
+                locationItem.marker.setVisible(true); // show the map marker
+                locationItem._destroy(false); // show the location in the list view
             }
-        }
-
-        // Place Google Map Markers for each search result
-        self.locationArray().forEach(function (locationItem) {
-            locationItem.marker = new google.maps.Marker({
-                position: locationItem.location(),
-                map: map,
-                title: locationItem.name()
-            });
         });
-        createNewInfoWindow();
-        addMarkerClickEventListner();
-    }
-
+    };
     this.query.subscribe(this.search);
+
+    // Code to execute when a list item (location) is clicked
+    this.listItemClick = function(place) {
+        for (var i = 0; i < self.locationArray().length; i++) {
+            self.locationArray()[i].isClicked(false); // remove highlight class for all applications
+        }
+        place.isClicked(true); // add highlight class to clicked location
+
+        // Close all open marker windows
+        closeMarkerInfoWindows();
+
+        // Bounce the selected location marker
+        toggleBounce(place.marker);
+
+        // Update the foursquare venue ID with the location selected from the list
+        fsVenueID = place.fourSquareVenueID();
+
+        performFsAPICall(place);
+    };
 };
-
-// Code to execute when a list item (location) is clicked
-$('#location-list').on('click', 'li', function() {
-    // Get the location name of the list item selected
-    var selectedItemName = $(this).text();
-
-    // Add / Remove the "highlight" class to highlight the selected item
-    $('.highlight').removeClass('highlight');
-    $(this).toggleClass('highlight');
-
-    // Scan the location array and bounce the marker of the location with a matching name of the clicked list item.
-    appVM.locationArray().forEach(function (locationItem) {
-        if(locationItem.name() == selectedItemName) {
-            // Close all open marker windows
-            closeMarkerInfoWindows();
-
-            // Bounce the selected location marker
-            toggleBounce(locationItem.marker);
-
-            // Update the foursquare venue ID with the location selected from the list
-            fsVenueID = locationItem.fourSquareVenueID();
-
-            performFsAPICall(locationItem);
-        };
-    });
-});
 
 // Perform the foursquare API call
 function performFsAPICall(locationItem) {
@@ -215,21 +196,21 @@ function performFsAPICall(locationItem) {
         }
 
         if(json.response.venue.contact && json.response.venue.contact && json.response.venue.contact.formattedPhone) {
-            venueFormattedPhone = json.response.venue.contact.formattedPhone
+            venueFormattedPhone = json.response.venue.contact.formattedPhone;
         }
         else {
             venueFormattedPhone = 'Venue Phone Number Unavailable';
         }
 
         if(json.response.venue && json.response.venue.hours && json.response.venue.hours.status) {
-            venueHours = json.response.venue.hours.status
+            venueHours = json.response.venue.hours.status;
         }
         else {
             venueHours = 'Venue Hours Unavailable';
         }
 
         if(json.response.venue && json.response.venue.canonicalUrl) {
-            venueURL = json.response.venue.canonicalUrl
+            venueURL = json.response.venue.canonicalUrl;
         }
         else {
             venueURL = 'http://www.foursquare.com';
@@ -299,7 +280,7 @@ function initMap() {
             title: locationItem.name()
         });
     });
-    createNewInfoWindow()
+    createNewInfoWindow();
     addMarkerClickEventListner();
 }
 
